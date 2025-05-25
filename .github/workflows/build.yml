@@ -44,4 +44,4 @@ jobs:
           files: |
             dist/wtime-${{ steps.vars.outputs.version }}.exe
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
