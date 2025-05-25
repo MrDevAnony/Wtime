@@ -7,16 +7,17 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Read version
         id: vars
+        shell: pwsh
         run: |
-          VERSION=$(cat VERSION)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          $VERSION = Get-Content VERSION
+          "version=$VERSION" >> $env:GITHUB_OUTPUT
 
       - name: Set up Python
         uses: actions/setup-python@v4
