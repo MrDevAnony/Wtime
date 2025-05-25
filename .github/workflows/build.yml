@@ -3,18 +3,16 @@ name: Build and Release wtime.exe
 on:
   push:
     tags:
-      - 'v*.*.*'  # فقط وقتی یک تگ مثل v1.2.3 پوش بشه، این اجرا میشه
+      - 'v*.*.*'
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      # 1. چک‌اوت ریپازیتوری
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. خوندن نسخه از فایل VERSION
       - name: Read version from VERSION file
         id: vars
         shell: pwsh
@@ -22,19 +20,16 @@ jobs:
           $version = Get-Content VERSION
           "version=$version" >> $env:GITHUB_OUTPUT
 
-      # 3. نصب پایتون
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      # 4. نصب وابستگی‌ها
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller colorama
 
-      # 5. ساخت فایل اجرایی
       - name: Build wtime.exe with PyInstaller
         run: |
           pyinstaller ^
@@ -47,13 +42,12 @@ jobs:
             --name wtime ^
             src/wtime.py
 
-      # 6. انتشار ریلیز در GitHub با نام نسخه‌ای
       - name: Create GitHub Release and upload EXE
         uses: softprops/action-gh-release@v2
         with:
           name: "wtime v${{ steps.vars.outputs.version }}"
           tag_name: "v${{ steps.vars.outputs.version }}"
-          draft: false  # ریلیز نهایی است، نه Draft
+          draft: false
           prerelease: false
           files: |
             dist/wtime.exe
