@@ -1,0 +1,47 @@
+name: Build and Release EXE
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Read version
+        id: vars
+        run: |
+          VERSION=$(cat VERSION)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+
+      - name: Build EXE with icon and optimization
+        run: |
+          pyinstaller --noconfirm --onefile --console ^
+            --icon "assets/clock.ico" ^
+            --clean --optimize 2 ^
+            --name wtime-${{ steps.vars.outputs.version }} ^
+            src/wtime.py
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "wtime v${{ steps.vars.outputs.version }}"
+          tag_name: "v${{ steps.vars.outputs.version }}"
+          files: |
+            dist/wtime-${{ steps.vars.outputs.version }}.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
