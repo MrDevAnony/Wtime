@@ -30,12 +30,8 @@ jobs:
           pip install pyinstaller
 
       - name: Build EXE with icon and optimization
-        run: |
-          pyinstaller --noconfirm --onefile --console ^
-            --icon "assets/clock.ico" ^
-            --clean --optimize 2 ^
-            --name wtime-${{ steps.vars.outputs.version }} ^
-            src/wtime.py
+        run:
+          pyinstaller --noconfirm --onefile --console --icon "assets/clock.ico" --clean --optimize 2 --name wtime-${{ steps.vars.outputs.version }} src/wtime.py
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
