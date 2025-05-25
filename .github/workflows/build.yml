@@ -1,44 +1,61 @@
-name: Build and Release EXE
+name: Build and Release wtime.exe
 
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'v*.*.*'  # فقط وقتی یک تگ مثل v1.2.3 پوش بشه، این اجرا میشه
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      # 1. چک‌اوت ریپازیتوری
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Read version
+      # 2. خوندن نسخه از فایل VERSION
+      - name: Read version from VERSION file
         id: vars
         shell: pwsh
         run: |
-          $VERSION = Get-Content VERSION
-          "version=$VERSION" >> $env:GITHUB_OUTPUT
+          $version = Get-Content VERSION
+          "version=$version" >> $env:GITHUB_OUTPUT
 
+      # 3. نصب پایتون
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      # 4. نصب وابستگی‌ها
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller colorama
 
-      - name: Build EXE with icon and optimization
-        run:
-          pyinstaller --noconfirm --onefile --console --icon "assets/clock.ico" --clean --optimize 2 --name wtime-${{ steps.vars.outputs.version }} src/wtime.py
+      # 5. ساخت فایل اجرایی
+      - name: Build wtime.exe with PyInstaller
+        run: |
+          pyinstaller ^
+            --noconfirm ^
+            --onefile ^
+            --console ^
+            --icon "assets/clock.ico" ^
+            --clean ^
+            --optimize 2 ^
+            --name wtime ^
+            src/wtime.py
 
-      - name: Create GitHub Release
+      # 6. انتشار ریلیز در GitHub با نام نسخه‌ای
+      - name: Create GitHub Release and upload EXE
         uses: softprops/action-gh-release@v2
         with:
           name: "wtime v${{ steps.vars.outputs.version }}"
           tag_name: "v${{ steps.vars.outputs.version }}"
+          draft: false  # ریلیز نهایی است، نه Draft
+          prerelease: false
           files: |
-            dist/wtime-${{ steps.vars.outputs.version }}.exe
+            dist/wtime.exe
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
