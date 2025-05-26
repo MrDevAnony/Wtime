@@ -20,7 +20,7 @@ def main():
 
     try:
         start = time.perf_counter()
-        result = subprocess.run(command)
+        result = subprocess.run(command, shell=True)
         end = time.perf_counter()
 
         elapsed = end - start
