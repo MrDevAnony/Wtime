@@ -11,6 +11,13 @@ def print_error(message: str):
 def print_time(label: str, seconds: float):
     print(f"\n{Fore.GREEN}{label:<15}:{Style.RESET_ALL} {seconds:.6f} sec")
 
+def calculate_time(start, returncode):
+    end = time.perf_counter()
+
+    elapsed = end - start
+    print_time("Real Time", elapsed)
+    sys.exit(returncode)
+
 def main():
     if len(sys.argv) < 2:
         print_error("Usage: wtime <command>")
@@ -20,16 +27,14 @@ def main():
 
     try:
         start = time.perf_counter()
-        result = subprocess.run(command)
-        end = time.perf_counter()
+        result = subprocess.run(command, shell=True)
 
-        elapsed = end - start
-        print_time("Real Time", elapsed)
-        sys.exit(result.returncode)
+        calculate_time(start, result.returncode)
 
-    except FileNotFoundError:
-        print_error(f"Command not found: {command[0]}")
-        sys.exit(127)
+    except KeyboardInterrupt:
+        print_error('Operation canceled by user')
+        calculate_time(start, 2)
+
     except Exception as e:
         print_error(f"Failed to execute command: {e}")
         sys.exit(1)
