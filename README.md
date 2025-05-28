@@ -62,7 +62,7 @@ from anywhere in your system.
 
 ### Example
 ```bash
-wtime curl http://www.gstatic.com/generate_204 -i
+wtime curl http://www.gstatic.com/generate_204 -ksIL
 ```
 
 ## Contributing
