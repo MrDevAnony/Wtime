@@ -44,12 +44,14 @@ jobs:
             src/wtime.py
 
       - name: Build wtime_cpp.exe with MSVC
-        shell: pwsh
+        shell: cmd
         run: |
-          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-          $vcvars = & "$vswhere" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-          $vcvarsall = Join-Path $vcvars "VC\Auxiliary\Build\vcvars64.bat"
-     
+          "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" ^
+            -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 ^
+            -property installationPath > temp_path.txt
+
+          set /p VC_PATH=<temp_path.txt
+          call "%VC_PATH%\VC\Auxiliary\Build\vcvars64.bat" && ^
           cl /O2 /std:c++20 /Zc:__cplusplus /D_HAS_CXX20_FORMAT=1 /Fe:wtime_cpp.exe src\wtime.cpp
 
       - name: Create GitHub Release and upload EXEs
