@@ -30,7 +30,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller colorama
 
-      - name: Build wtime.exe with PyInstaller
+      - name: Build wtime_py.exe with PyInstaller
         shell: cmd
         run: |
           pyinstaller ^
@@ -40,7 +40,7 @@ jobs:
             --icon "assets/clock.ico" ^
             --clean ^
             --optimize 2 ^
-            --name wtime ^
+            --name wtime_py ^
             src/wtime.py
 
       - name: Build wtime_cpp.exe with MSVC
