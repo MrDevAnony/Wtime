@@ -1,4 +1,4 @@
-# Wtime
+# Wtime (Python & CPP version)
 
 Wtime is a lightweight and efficient command execution timer designed specifically for Windows.  
 It measures the exact runtime duration of any command or program you execute and provides a simple output with the elapsed time.
