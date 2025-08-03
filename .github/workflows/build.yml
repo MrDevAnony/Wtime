@@ -50,7 +50,7 @@ jobs:
           $vcvars = & "$vswhere" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
           $vcvarsall = Join-Path $vcvars "VC\Auxiliary\Build\vcvars64.bat"
      
-          cmd /c "`"$vcvarsall`" && cl /O2 /std:c++23 /Fe:wtime_cpp.exe src\wtime.cpp"
+          cl /O2 /std:c++20 /Zc:__cplusplus /D_HAS_CXX20_FORMAT=1 /Fe:wtime_cpp.exe src\wtime.cpp
 
       - name: Create GitHub Release and upload EXEs
         uses: softprops/action-gh-release@v2
