@@ -63,7 +63,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            dist/wtime.exe
+            dist/wtime_py.exe
             wtime_cpp.exe
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
