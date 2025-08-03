@@ -46,13 +46,10 @@ jobs:
       - name: Build wtime_cpp.exe with MSVC
         shell: pwsh
         run: |
-          # Find latest Visual Studio compiler
-          $vcvars = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
-            -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
-            -property installationPath
-          $vcvars = & $vcvars
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vcvars = & "$vswhere" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
           $vcvarsall = Join-Path $vcvars "VC\Auxiliary\Build\vcvars64.bat"
-
+     
           cmd /c "`"$vcvarsall`" && cl /O2 /std:c++23 /Fe:wtime_cpp.exe src\wtime.cpp"
 
       - name: Create GitHub Release and upload EXEs
