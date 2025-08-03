@@ -43,7 +43,19 @@ jobs:
             --name wtime ^
             src/wtime.py
 
-      - name: Create GitHub Release and upload EXE
+      - name: Build wtime_cpp.exe with MSVC
+        shell: pwsh
+        run: |
+          # Find latest Visual Studio compiler
+          $vcvars = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
+            -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+            -property installationPath
+          $vcvars = & $vcvars
+          $vcvarsall = Join-Path $vcvars "VC\Auxiliary\Build\vcvars64.bat"
+
+          cmd /c "`"$vcvarsall`" && cl /O2 /std:c++23 /Fe:wtime_cpp.exe src\wtime.cpp"
+
+      - name: Create GitHub Release and upload EXEs
         uses: softprops/action-gh-release@v2
         with:
           name: "wtime v${{ steps.vars.outputs.version }}"
@@ -52,5 +64,6 @@ jobs:
           prerelease: false
           files: |
             dist/wtime.exe
+            wtime_cpp.exe
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
